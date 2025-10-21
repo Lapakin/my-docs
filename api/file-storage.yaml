@@ -1,0 +1,585 @@
+openapi: 3.1.0
+info:
+  title: File Storage Service
+  description: A service for managing user documents
+  version: 1.0.0
+servers:
+  - url: /api/v1
+paths:
+  /documents:
+    parameters:
+      - $ref: '#/components/parameters/Authorization'
+    post:
+      tags:
+        - Documents
+      summary: Upload a new document
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Data'
+        required: true
+      responses:
+        '201':
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - fileUpload
+
+    get:
+      tags:
+        - Documents
+      summary: Get list of user documents
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Obtained list of documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - getDocumentsList
+
+  /documents/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Authorization'
+    get:
+      tags:
+        - Documents
+      summary: Get document by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Obtained document data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - getDocumentById
+
+    put:
+      tags:
+        - Documents
+      summary: Update document
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Document'
+        required: true
+      responses:
+        '200':
+          description: Successfully updated document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - updateDocument
+
+    delete:
+      tags:
+        - Documents
+      summary: Delete document
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Document deleted
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - deleteDocument
+
+  /documents/{id}/download:
+    get:
+      tags:
+        - Documents
+      summary: Download document file
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Download file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - downloadDocument
+
+  /folders:
+    post:
+      tags:
+        - Folders
+      summary: Create a new folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderRequest'
+      responses:
+        '201':
+          description: Folder created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - createFolder
+
+    get:
+      tags:
+        - Folders
+      summary: Get list of folders
+      responses:
+        '200':
+          description: Successfully obtained list of folders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        x-features:
+          - getFoldersList
+
+  /folders/{id}:
+    get:
+      tags:
+        - Folders
+      summary: Get folder by ID
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Successfully obtained folder data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        x-features:
+          - getFolderById
+
+    delete:
+      tags:
+        - Folders
+      summary: Delete folder
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Folder deleted
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - deleteFolder
+
+  /shares:
+    post:
+      tags:
+        - Shares
+      summary: Create a new share
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareRequest'
+        required: true
+      responses:
+        '201':
+          description: Share created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Share'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - createShare
+
+  /shares/link/{link}:
+    get:
+      tags:
+        - Shares
+      summary: Get share by link
+      parameters:
+        - name: link
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Share details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Share'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-features:
+        - getShareByLink
+
+components:
+  parameters:
+    Authorization:
+      name: token
+      in: header
+      schema:
+        type: string
+        format: string
+      required: true
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Status code
+        message:
+          type: string
+          description: Error description
+
+    Data:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+        folder_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        description:
+          type: string
+        file_path:
+          type: string
+        file_size:
+          type: integer
+          format: int64
+        mime_type:
+          type: string
+        is_public:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+        modified_at:
+          type: string
+          format: date-time
+
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        path:
+          type: string
+        is_public:
+          type: boolean
+        color:
+          type: string
+        icon:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        modified_at:
+          type: string
+          format: date-time
+
+    FolderRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        parent_id:
+          type: integer
+          nullable: true
+
+    Share:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        document_id:
+          type: integer
+        owner_id:
+          type: integer
+        shared_with:
+          type: string
+          nullable: true
+        share_link:
+          type: string
+        permission:
+          type: string
+          enum: [ view, download, edit ]
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        access_count:
+          type: integer
+        max_access:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        modified_at:
+          type: string
+          format: date-time
+
+    ShareRequest:
+      type: object
+      properties:
+        document_id:
+          type: integer
+        permission:
+          type: string
+          enum: [ view, download, edit ]
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        max_access:
+          type: integer
+        password:
+          type: string
+      required:
+        - document_id
+        - permission
+
+  x-features:
+    fileUpload:
+      description: File uploads
+    getDocumentsList:
+      description: Retrieving a list of documents
+    getDocumentById:
+      description: Retrieving a document by ID
+    updateDocument:
+      description: Updating document metadata
+    deleteDocument:
+      description: Deleting documents
+    downloadDocument:
+      description: Downloading document files
+    createFolder:
+      description: Creating folders
+    getFoldersList:
+      description: Retrieving a list of folders
+    getFolderById:
+      description: Retrieving a folder by ID
+    deleteFolder:
+      description: Deleting folders
+    createShare:
+      description: Creating shares
+    getShareByLink:
+      description: Retrieving a share by link

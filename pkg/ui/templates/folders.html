@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }} - MyDocs</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>MyDocs</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="/documents" class="nav-item">
+                    <span>📄</span> Documents
+                </a>
+                <a href="/folders" class="nav-item active">
+                    <span>📁</span> Folders
+                </a>
+                <a href="/shares" class="nav-item">
+                    <span>🔗</span> Shares
+                </a>
+                <a href="/profile" class="nav-item">
+                    <span>👤</span> Profile
+                </a>
+                <a href="#" class="nav-item logout" onclick="logout(); return false;">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Folders</h1>
+                <button class="btn btn-primary" id="createFolderBtn">
+                    <span>+</span> New Folder
+                </button>
+            </header>
+
+            <div class="content-body">
+                <div class="item-list" id="foldersList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📁</div>
+                        <p>No folders found</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="createFolderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Folder</h2>
+                <button class="modal-close" onclick="closeFolderModal()">&times;</button>
+            </div>
+            <form id="createFolderForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="folderName">Folder Name</label>
+                        <input type="text" id="folderName" name="name" required placeholder="Enter folder name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeFolderModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/folders.js"></script>
+</body>
+</html>
+

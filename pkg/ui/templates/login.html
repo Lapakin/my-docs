@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }} - MyDocs</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h1>Welcome Back</h1>
+                <p class="subtitle">Sign in to your account</p>
+
+                {{ if .error }}
+                <div class="error-message show">{{ .error }}</div>
+                {{ end }}
+                {{ if .success }}
+                <div class="success-message show">{{ .success }}</div>
+                {{ end }}
+
+                <form id="loginForm" method="POST" action="/login">
+                    <div class="form-group">
+                        <label for="login">Email or Username</label>
+                        <input type="text" id="login" name="login" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+
+                    <div class="error-message" id="errorMessage"></div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                </form>
+
+                <p class="auth-footer">
+                    Don't have an account? <a href="/register">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js?v=3"></script>
+</body>
+</html>
+

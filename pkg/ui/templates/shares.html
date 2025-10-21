@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }} - MyDocs</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>MyDocs</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="/documents" class="nav-item">
+                    <span>📄</span> Documents
+                </a>
+                <a href="/folders" class="nav-item">
+                    <span>📁</span> Folders
+                </a>
+                <a href="/shares" class="nav-item active">
+                    <span>🔗</span> Shares
+                </a>
+                <a href="/profile" class="nav-item">
+                    <span>👤</span> Profile
+                </a>
+                <a href="#" class="nav-item logout" onclick="logout(); return false;">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Shared Files</h1>
+            </header>
+
+            <div class="content-body">
+                <div class="item-list" id="sharesList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔗</div>
+                        <p>No shared files</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/shares.js"></script>
+</body>
+</html>
+

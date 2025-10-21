@@ -1,0 +1,20 @@
+addr: ":8081"
+
+db:
+  host: user-management-postgres
+  port: 5432
+  database: user_management
+  user: postgres
+  password: postgres
+  ssl_mode: disable
+  isolation_level: ReadCommitted
+
+jwt:
+  secret_key: "your-secret-key-change-in-production-min-32-chars"
+  access_token_ttl: 1h
+  refresh_token_ttl: 168h
+
+logging:
+  level: debug
+  formatter: json
+

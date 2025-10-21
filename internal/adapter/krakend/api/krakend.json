@@ -1,0 +1,329 @@
+{
+  "$schema": "https://www.krakend.io/schema/v2.5/krakend.json",
+  "version": 3,
+  "name": "File Storage API Gateway",
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "port": 8000,
+  "endpoints": [
+    {
+      "endpoint": "/api/v1/auth/register",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/auth/register",
+          "encoding": "no-op",
+          "method": "POST",
+          "host": ["http://user-management:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/auth/login",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/auth/login",
+          "encoding": "no-op",
+          "method": "POST",
+          "host": ["http://user-management:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/users/{id}",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/users/{id}",
+          "encoding": "json",
+          "method": "GET",
+          "host": ["http://user-management:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/users",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/users",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["http://user-management:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/users/{id}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/users/{id}",
+          "encoding": "no-op",
+          "method": "DELETE",
+          "host": ["http://user-management:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/users/{id}/deactivate",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/users/{id}/deactivate",
+          "encoding": "no-op",
+          "method": "POST",
+          "host": ["http://user-management:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/users/{id}/activate",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/users/{id}/activate",
+          "encoding": "no-op",
+          "method": "POST",
+          "host": ["http://user-management:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/users/{id}/changePassword",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/users/{id}/changePassword",
+          "encoding": "no-op",
+          "method": "POST",
+          "host": ["http://user-management:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/folders",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/folders",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/folders",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/folders",
+          "encoding": "no-op",
+          "method": "POST",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/folders/{id}",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/folders/{id}",
+          "encoding": "json",
+          "method": "GET",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/folders/{id}",
+      "method": "PUT",
+      "output_encoding": "json",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/folders/{id}",
+          "encoding": "json",
+          "method": "PUT",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/folders/{id}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/folders/{id}",
+          "encoding": "no-op",
+          "method": "DELETE",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/documents",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/documents",
+          "encoding": "no-op",
+          "method": "POST",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents/{id}",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/documents/{id}",
+          "encoding": "json",
+          "method": "GET",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents/{id}",
+      "method": "PUT",
+      "output_encoding": "json",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/documents/{id}",
+          "encoding": "json",
+          "method": "PUT",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents/{id}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/documents/{id}",
+          "encoding": "no-op",
+          "method": "DELETE",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/documents/{id}/download",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/documents/{id}/download",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/shares",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/shares",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/shares",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/shares",
+          "encoding": "no-op",
+          "method": "POST",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/v1/shares/{id}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "backend": [
+        {
+          "url_pattern": "/api/v1/shares/{id}",
+          "encoding": "no-op",
+          "method": "DELETE",
+          "host": ["http://file-storage:8080"]
+        }
+      ]
+    }
+  ],
+  "extra_config": {
+    "security/cors": {
+      "allow_origins": ["*"],
+      "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "allow_headers": ["Origin", "Authorization", "Content-Type"],
+      "expose_headers": ["Content-Length"],
+      "max_age": "12h"
+    }
+  }
+}
+

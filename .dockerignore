@@ -1,0 +1,63 @@
+# Ignore version control files
+.git
+.gitignore
+
+# Ignore IDE/editor files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Ignore build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin
+/build
+
+# Ignore dependency directories
+vendor/
+
+# Ignore logs
+*.log
+
+# Ignore test coverage
+*.coverage
+coverage.html
+*.prof
+
+# Ignore environment and config files
+.env
+.env.*
+*.local
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore documentation
+README.md
+LICENSE
+docs/
+
+# Ignore Docker files
+docker-compose*.yaml
+.dockerignore
+
+# Ignore data directories
+data/
+
+# Ignore test files (optional - remove if tests should run in container)
+*_test.go
+tests/
+
+# Ignore makefile and scripts
+makefile
+Makefile
+hack/
+

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }} - MyDocs</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>MyDocs</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="/documents" class="nav-item active">
+                    <span>📄</span> Documents
+                </a>
+                <a href="/folders" class="nav-item">
+                    <span>📁</span> Folders
+                </a>
+                <a href="/shares" class="nav-item">
+                    <span>🔗</span> Shares
+                </a>
+                <a href="/profile" class="nav-item">
+                    <span>👤</span> Profile
+                </a>
+                <a href="#" class="nav-item logout" onclick="logout(); return false;">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Documents</h1>
+                <button class="btn btn-primary" id="uploadBtn">
+                    <span>+</span> Upload
+                </button>
+            </header>
+
+            <div class="content-body">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search documents...">
+                        <button id="searchBtn">🔍</button>
+                    </div>
+                </div>
+
+                <div class="item-list" id="documentsList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📄</div>
+                        <p>No documents found</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Document</h2>
+                <button class="modal-close" onclick="closeUploadModal()">&times;</button>
+            </div>
+            <form id="uploadForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="file">Choose file</label>
+                        <input type="file" id="file" name="file" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fileName">Name (optional)</label>
+                        <input type="text" id="fileName" name="name" placeholder="Leave empty for original name">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description (optional)</label>
+                        <textarea id="description" name="description" rows="3" placeholder="Add a description..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="shareModal" class="modal share-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Share Document</h2>
+                <button class="modal-close" onclick="closeShareModal()">&times;</button>
+            </div>
+            <form id="shareForm">
+                <div class="modal-body">
+                    <input type="hidden" id="shareDocumentId" name="document_id">
+                    <div class="form-group">
+                        <label for="permission">Permission</label>
+                        <select id="permission" name="permission" required>
+                            <option value="view">View only</option>
+                            <option value="download">View & Download</option>
+                            <option value="edit">Full access</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="maxAccess">Max accesses (0 = unlimited)</label>
+                        <input type="number" id="maxAccess" name="max_access" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiresAt">Expires at (optional)</label>
+                        <input type="datetime-local" id="expiresAt" name="expires_at">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeShareModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Share Link</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/documents.js"></script>
+</body>
+</html>
+

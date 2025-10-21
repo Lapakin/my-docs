@@ -1,0 +1,225 @@
+services:
+  user-management:
+    build:
+      context: .
+      dockerfile: ./cmd/user-management/Dockerfile
+    container_name: user-management
+    ports:
+      - "8081:8081"
+    environment:
+      - CONFIG_PATH=/app/config.yaml
+      - DB_HOST=${USER_MGMT_DB_HOST:-user-management-postgres}
+      - DB_PORT=${USER_MGMT_DB_PORT:-5432}
+      - DB_DATABASE=${USER_MGMT_POSTGRES_DB:-user_management}
+      - DB_USER=${USER_MGMT_POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${USER_MGMT_POSTGRES_PASSWORD:-postgres}
+      - DB_SSL_MODE=${DB_SSL_MODE:-disable}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ACCESS_TOKEN_TTL=${JWT_ACCESS_TOKEN_TTL:-1h}
+      - JWT_REFRESH_TOKEN_TTL=${JWT_REFRESH_TOKEN_TTL:-168h}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FORMATTER=${LOG_FORMATTER:-json}
+    depends_on:
+      user-management-postgres:
+        condition: service_healthy
+    volumes:
+      - ./cmd/user-management/config.yaml:/app/config.yaml
+    networks:
+      - file-storage-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8081/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-management-postgres:
+    image: postgres:15-alpine
+    container_name: user-management-postgres
+    environment:
+      POSTGRES_DB: ${USER_MGMT_POSTGRES_DB:-user_management}
+      POSTGRES_USER: ${USER_MGMT_POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${USER_MGMT_POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_user_management_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${USER_MGMT_POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - file-storage-network
+
+  user-management-migrations:
+    build:
+      context: .
+      dockerfile: ./cmd/user-management/Dockerfile.migrations
+    container_name: user-management-migrations
+    command: [
+      "-path", "/migrations",
+      "-database", "postgres://${USER_MGMT_POSTGRES_USER:-postgres}:${USER_MGMT_POSTGRES_PASSWORD:-postgres}@user-management-postgres:5432/${USER_MGMT_POSTGRES_DB:-user_management}?sslmode=disable",
+      "up"
+    ]
+    depends_on:
+      user-management-postgres:
+        condition: service_healthy
+    networks:
+      - file-storage-network
+
+  file-storage:
+    build:
+      context: .
+      dockerfile: ./cmd/file-storage/Dockerfile
+    container_name: file-storage
+    ports:
+      - "8080:8080"
+    environment:
+      - CONFIG_PATH=/app/config.yaml
+      - DB_HOST=${FILE_STORAGE_DB_HOST:-file-storage-postgres}
+      - DB_PORT=${FILE_STORAGE_DB_PORT:-5432}
+      - DB_DATABASE=${FILE_STORAGE_POSTGRES_DB:-file_storage}
+      - DB_USER=${FILE_STORAGE_POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${FILE_STORAGE_POSTGRES_PASSWORD:-postgres}
+      - DB_SSL_MODE=${DB_SSL_MODE:-disable}
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT:-file-storage-minio:9000}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadmin}
+      - MINIO_USE_SSL=${MINIO_USE_SSL:-false}
+      - MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME:-documents}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FORMATTER=${LOG_FORMATTER:-json}
+    depends_on:
+      file-storage-postgres:
+        condition: service_healthy
+      file-storage-minio:
+        condition: service_healthy
+      file-storage-migrations:
+        condition: service_completed_successfully
+    volumes:
+      - ./cmd/file-storage/config.yaml:/app/config.yaml
+    networks:
+      - file-storage-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  file-storage-minio:
+    image: minio/minio:latest
+    container_name: file-storage-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - file-storage-network
+
+
+  file-storage-postgres:
+    image: postgres:15-alpine
+    container_name: file-storage-postgres
+    environment:
+      POSTGRES_DB: ${FILE_STORAGE_POSTGRES_DB:-file_storage}
+      POSTGRES_USER: ${FILE_STORAGE_POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${FILE_STORAGE_POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_file_storage_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${FILE_STORAGE_POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - file-storage-network
+
+  file-storage-migrations:
+    build:
+      context: .
+      dockerfile: ./cmd/file-storage/Dockerfile.migrations
+    container_name: file-storage-migrations
+    command: [
+      "-path", "/migrations",
+      "-database", "postgres://${FILE_STORAGE_POSTGRES_USER:-postgres}:${FILE_STORAGE_POSTGRES_PASSWORD:-postgres}@file-storage-postgres:5432/${FILE_STORAGE_POSTGRES_DB:-file_storage}?sslmode=disable",
+      "up"
+    ]
+    depends_on:
+      file-storage-postgres:
+        condition: service_healthy
+    networks:
+      - file-storage-network
+
+  krakend:
+    image: devopsfaith/krakend:2.5
+    container_name: krakend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./internal/adapter/krakend/api/krakend.json:/etc/krakend/krakend.json
+    depends_on:
+      user-management:
+        condition: service_healthy
+      file-storage:
+        condition: service_healthy
+    networks:
+      - file-storage-network
+    restart: unless-stopped
+    command: ["run", "-c", "/etc/krakend/krakend.json"]
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/__health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ui:
+    build:
+      context: .
+      dockerfile: ./cmd/ui/Dockerfile
+    container_name: ui
+    ports:
+      - "8082:8082"
+    environment:
+      - CONFIG_PATH=/app/config.yaml
+      - KRAKEND_URL=${KRAKEND_URL:-http://krakend:8000}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FORMATTER=${LOG_FORMATTER:-json}
+    depends_on:
+      krakend:
+        condition: service_healthy
+    volumes:
+      - ./cmd/ui/config.yaml:/app/config.yaml
+    networks:
+      - file-storage-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8082/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  file-storage-network:
+    driver: bridge
+
+volumes:
+  postgres_user_management_data:
+  postgres_file_storage_data:
+  minio_data:
+

@@ -1,0 +1,8 @@
+addr: ":8082"
+krakend_url: "http://krakend:8000"
+session_secret: "your-secret-key-change-in-production"
+
+logging:
+  level: debug
+  formatter: json
+
