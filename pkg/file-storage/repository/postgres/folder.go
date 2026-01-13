@@ -23,16 +23,16 @@ func NewFolderRepository(db sqlx.ExtContext) *FolderRepository {
 func (r *FolderRepository) Create(ctx context.Context, folder *models.Folder) error {
 	query, args, err := q.NewInsert(ctx).
 		Into("folders").
-		Columns(`
-			user_id,
-			parent_id,
-			name,
-			path,
-			is_public,
-			color,
-			icon,
-			created_at
-		`).
+		Columns(
+			"user_id",
+			"parent_id",
+			"name",
+			"path",
+			"is_public",
+			"color",
+			"icon",
+			"created_at",
+		).
 		Values(
 			folder.UserID,
 			folder.ParentID,
@@ -152,8 +152,9 @@ func (r *FolderRepository) Update(ctx context.Context, folder *models.Folder) er
 }
 
 func (r *FolderRepository) Delete(ctx context.Context, id uint64) error {
-	query, args, err := q.NewSoftDelete(ctx).
+	query, args, err := q.NewUpdate(ctx).
 		Table("folders").
+		Set(q.ColumnIsDeleted, true).
 		Where(sq.Eq{"id": id}).
 		ToSql()
 	if err != nil {

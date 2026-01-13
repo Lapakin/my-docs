@@ -204,7 +204,7 @@ async function handleShare(e) {
     const expiresAt = document.getElementById('expiresAt').value;
 
     const shareData = {
-        document_id: documentId,
+        document_id: parseInt(documentId),
         permission: permission,
         max_access: maxAccess,
     };

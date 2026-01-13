@@ -3,55 +3,55 @@ GOLINT_VERSION := v2.5.0
 
 .PHONY:up
 up:
-	docker-compose up -d file-storage-minio
+	docker compose up -d file-storage-minio
 	$(MAKE) service-start SERVICE=user-management
 	$(MAKE) service-start SERVICE=file-storage
-	docker-compose up -d ui
-	docker-compose up -d krakend
+	docker compose up -d ui
+	docker compose up -d krakend
 
 .PHONY:build
 build:
-	docker-compose build
+	docker compose build
 
 .phony:stop
 stop:
-	docker-compose stop
+	docker compose stop
 
 .phony:down
 down:
-	docker-compose down
+	docker compose down
 
 .PHONY:service-start
 service-start:
-	docker-compose up -d $(SERVICE)-postgres
+	docker compose up -d $(SERVICE)-postgres
 	./hack/scripts/wait-for-postgres.sh ${SERVICE}-postgres
 	$(MAKE) migrations-up SERVICE=${SERVICE}
-	docker-compose up -d ${SERVICE}
+	docker compose up -d ${SERVICE}
 
 .PHONY:service-build
 service-build:
-	docker-compose build ${SERVICE}
+	docker compose build ${SERVICE}
 
 .PHONY:service-rebuild
 service-rebuild:
-	docker-compose stop ${SERVICE}
-	docker-compose build ${SERVICE}
+	docker compose stop ${SERVICE}
+	docker compose build ${SERVICE}
 	$(MAKE) service-start SERVICE=${SERVICE}
 
 .PHONY:service-stop
 service-stop:
-	docker-compose stop ${SERVICE}
+	docker compose stop ${SERVICE}
 
 .PHONY:migrations-up
 migrations-up:
 	@docker run --rm -v $(DIR)/pkg/${SERVICE}/repository/postgres/migrations:/migrations \
-		--network file-storage_file-storage-network migrate/migrate -path=/migrations/ \
+		--network my-docs_file-storage-network migrate/migrate -path=/migrations/ \
 		-database "postgres://postgres:postgres@${SERVICE}-postgres:5432/$(subst -,_,${SERVICE})?sslmode=disable" up
 
 .PHONY:migrations-down
 migrations-down:
 	@docker run --rm -v $(DIR)/pkg/${SERVICE}/repository/postgres/migrations:/migrations \
-		--network file-storage_file-storage-network migrate/migrate -path=/migrations/ \
+		--network my-docs_file-storage-network migrate/migrate -path=/migrations/ \
 		-database "postgres://postgres:postgres@${SERVICE}-postgres:5432/$(subst -,_,${SERVICE})?sslmode=disable" down -all
 
 .PHONY:generate-mocks

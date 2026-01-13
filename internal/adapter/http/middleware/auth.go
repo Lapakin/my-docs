@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,7 @@ func Auth(tokenManager *jwt.TokenManager) gin.HandlerFunc {
 			return
 		}
 
-		c.Set(UserIDKey, claims.UserID)
+		c.Set(UserIDKey, strconv.FormatUint(claims.UserID, 10))
 		c.Set(UserEmailKey, claims.Email)
 		c.Set(UserUsernameKey, claims.Username)
 		c.Set(UserRoleKey, claims.Role)

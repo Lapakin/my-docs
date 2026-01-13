@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -25,7 +26,16 @@ func (r *minioEndpointResolver) ResolveEndpoint(_ context.Context, params s3.End
 }
 
 func NewMinIOClient(cfg *object.Config) (*s3.Client, error) {
-	endpointURL, err := url.Parse(cfg.Endpoint)
+	endpoint := cfg.Endpoint
+	if !strings.HasPrefix(endpoint, "http://") && !strings.HasPrefix(endpoint, "https://") {
+		protocol := "http"
+		if cfg.UseSSL {
+			protocol = "https"
+		}
+		endpoint = fmt.Sprintf("%s://%s", protocol, endpoint)
+	}
+
+	endpointURL, err := url.Parse(endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse endpoint URL: %w", err)
 	}
@@ -40,6 +50,20 @@ func NewMinIOClient(cfg *object.Config) (*s3.Client, error) {
 		EndpointResolverV2: &minioEndpointResolver{URL: endpointURL},
 		UsePathStyle:       true,
 	})
+
+	if cfg.BucketName != "" {
+		_, err = client.HeadBucket(context.Background(), &s3.HeadBucketInput{
+			Bucket: aws.String(cfg.BucketName),
+		})
+		if err != nil {
+			_, err = client.CreateBucket(context.Background(), &s3.CreateBucketInput{
+				Bucket: aws.String(cfg.BucketName),
+			})
+			if err != nil {
+				return nil, fmt.Errorf("failed to create bucket %s: %w", cfg.BucketName, err)
+			}
+		}
+	}
 
 	return client, nil
 }

@@ -53,6 +53,9 @@ func NewRouter(svc *services.Services, logger *logging.Logger) *gin.Engine {
 		protected.GET("/folders", handlers.NewFoldersPageHandler())
 		protected.GET("/shares", handlers.NewSharesPageHandler())
 		protected.GET("/profile", handlers.NewProfilePageHandler())
+		protected.POST("/profile", func(c *gin.Context) {
+			c.Redirect(http.StatusFound, "/profile")
+		})
 	}
 
 	apiV1 := r.Group("/api")

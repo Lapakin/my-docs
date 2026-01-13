@@ -128,6 +128,10 @@ func NewChangePasswordHandler(svc services.AuthSvc) gin.HandlerFunc {
 		}
 
 		if err = svc.ChangePassword(c.Request.Context(), userID, req); err != nil {
+			if errors.Is(err, services.ErrInvalidCredentials) {
+				rest.RespondError(c, http.StatusUnauthorized, err)
+				return
+			}
 			rest.RespondError(c, http.StatusInternalServerError, err)
 			return
 		}

@@ -24,18 +24,18 @@ func NewShareRepository(db sqlx.ExtContext) *ShareRepository {
 func (r *ShareRepository) Create(ctx context.Context, share *models.Share) error {
 	query, args, err := q.NewInsert(ctx).
 		Into("shares").
-		Columns(`
-			document_id,
-			owner_id,
-			shared_with,
-			share_link,
-			permission,
-			expires_at,
-			access_count,
-			max_access,
-			password,
-			created_at
-		`).
+		Columns(
+			"document_id",
+			"owner_id",
+			"shared_with",
+			"share_link",
+			"permission",
+			"expires_at",
+			"access_count",
+			"max_access",
+			"password",
+			"created_at",
+		).
 		Values(
 			share.DocumentID,
 			share.OwnerID,

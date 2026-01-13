@@ -132,6 +132,12 @@ func NewUpdateDocumentHandler(svc services.DocumentSvc) gin.HandlerFunc {
 			return
 		}
 
+		documentID, err := utils.StringToUint64(c.Param(models.IDParam))
+		if err != nil {
+			rest.RespondError(c, http.StatusBadRequest, rest.ErrConvID)
+			return
+		}
+
 		body, err := io.ReadAll(c.Request.Body)
 		if err != nil {
 			rest.RespondError(c, http.StatusBadRequest, rest.ErrRequestBodyReading)
@@ -144,6 +150,7 @@ func NewUpdateDocumentHandler(svc services.DocumentSvc) gin.HandlerFunc {
 			rest.RespondError(c, http.StatusBadRequest, rest.ErrUnmarshal)
 			return
 		}
+		doc.ID = documentID
 
 		if doc == nil {
 			rest.RespondError(c, http.StatusBadRequest, rest.ErrEmptyBody)

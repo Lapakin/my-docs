@@ -5,8 +5,8 @@ import (
 )
 
 type Share struct {
-	ID          uint64     `json:"id" db:"id"`
-	DocumentID  uint64     `json:"document_id" db:"document_id"`
+	ID          uint64     `json:"id,string" db:"id"`
+	DocumentID  uint64     `json:"document_id,string" db:"document_id"`
 	OwnerID     uint64     `json:"owner_id" db:"owner_id"`
 	SharedWith  *uint64    `json:"shared_with,omitempty" db:"shared_with"`
 	ShareLink   string     `json:"share_link" db:"share_link"`

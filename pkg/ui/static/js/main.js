@@ -9,11 +9,11 @@ function getCookie(name) {
 
 async function apiRequest(url, options = {}) {
     const token = getCookie('token');
-    
+
     const defaultHeaders = {
         ...(token && { 'Authorization': `Bearer ${token}` }),
     };
-    
+
     // Only add Content-Type for non-FormData requests
     if (!(options.body instanceof FormData)) {
         defaultHeaders['Content-Type'] = 'application/json';
@@ -27,11 +27,11 @@ async function apiRequest(url, options = {}) {
         },
     });
 
-    if (response.status === 401) {
+    if (response.status === 401 && !options.noRedirect) {
         window.location.href = '/login';
         return null;
     }
-    
+
     return response;
 }
 

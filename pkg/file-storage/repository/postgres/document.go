@@ -23,17 +23,17 @@ func NewDocumentRepository(db sqlx.ExtContext) *DocumentRepository {
 func (r *DocumentRepository) Create(ctx context.Context, doc *models.Document) error {
 	query, args, err := q.NewInsert(ctx).
 		Into("documents").
-		Columns(`
-			user_id,
-			folder_id,
-			name,
-			description,
-			file_path,
-			file_size,
-			mime_type,
-			is_public,
-			created_at
-		`).
+		Columns(
+			"user_id",
+			"folder_id",
+			"name",
+			"description",
+			"file_path",
+			"file_size",
+			"mime_type",
+			"is_public",
+			"created_at",
+		).
 		Values(
 			doc.UserID,
 			doc.FolderID,
@@ -156,8 +156,9 @@ func (r *DocumentRepository) Update(ctx context.Context, doc *models.Document) e
 }
 
 func (r *DocumentRepository) Delete(ctx context.Context, id uint64) error {
-	query, args, err := q.NewSoftDelete(ctx).
+	query, args, err := q.NewUpdate(ctx).
 		Table("documents").
+		Set(q.ColumnIsDeleted, true).
 		Where(sq.Eq{"id": id}).
 		ToSql()
 	if err != nil {
