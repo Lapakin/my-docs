@@ -10,7 +10,7 @@ My-docs is a Go-based file storage service that handles user management, file/fo
 First, download the project files by running the following command:
 
 ```bash
-git clone [https://github.com/Lapakin/my-docs.git](https://github.com/Lapakin/my-docs.git)
+git clone https://github.com/Lapakin/my-docs.git
 
 ```
 
